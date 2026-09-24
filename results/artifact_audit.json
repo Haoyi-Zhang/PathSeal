@@ -1,0 +1,16 @@
+{
+  "claim_rows": 10,
+  "csv_data_rows": {
+    "baseline_results.csv": 5640,
+    "claim_evidence_ledger.csv": 10,
+    "external_resources.csv": 3,
+    "mutation_results.csv": 280,
+    "program_results.csv": 120,
+    "stage_results.csv": 940
+  },
+  "csv_files_checked": 6,
+  "external_resource_rows": 3,
+  "json_files_checked": 10,
+  "python_files_parsed": 13,
+  "status": "PASS"
+}

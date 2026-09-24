@@ -1,0 +1,19 @@
+{
+  "composition": {
+    "composition_obligations": 262144,
+    "transform_pairs": 65536,
+    "two_bit_transforms": 256
+  },
+  "hardness_reduction": {
+    "boolean_fields": 3,
+    "hypergraph_instances": 128,
+    "minimum_key_obligations": 128,
+    "source_edges_checked": 448
+  },
+  "hitting_set": {
+    "boolean_functions": 256,
+    "minimum_key_obligations": 256,
+    "projection_equivalence_obligations": 2048
+  },
+  "status": "PASS"
+}
