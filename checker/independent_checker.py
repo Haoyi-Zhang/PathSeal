@@ -115,8 +115,8 @@ def _validate_program(program: Mapping[str, Any]) -> None:
         raise CheckFailure("duplicate stack slot")
     if any(slot not in specs for slot in stack["slots"]):
         raise CheckFailure("undeclared stack slot")
-    if specs[stack["pointer"]]["size"] < len(stack["slots"]) + 1:
-        raise CheckFailure("stack pointer domain too small")
+    if specs[stack["pointer"]]["size"] != len(stack["slots"]) + 1:
+        raise CheckFailure("stack pointer domain must equal capacity plus one")
 
     seen_segments: set[str] = set()
     for segment in program["segments"]:

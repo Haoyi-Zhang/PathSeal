@@ -75,8 +75,8 @@ def validate_program(program: Mapping[str, Any]) -> None:
     for slot in slots:
         if slot not in specs:
             raise ModelError(f"stack slot {slot} is undeclared")
-    if specs[stack["pointer"]]["size"] < len(slots) + 1:
-        raise ModelError("stack pointer domain is too small")
+    if specs[stack["pointer"]]["size"] != len(slots) + 1:
+        raise ModelError("stack pointer domain must equal capacity plus one")
 
     segment_ids: set[str] = set()
     for seg in program["segments"]:
