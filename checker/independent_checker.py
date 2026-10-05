@@ -158,6 +158,8 @@ def _validate_program(program: Mapping[str, Any]) -> None:
         raise CheckFailure("invalid final field list")
     if any(name not in specs for name in program["final_fields"]):
         raise CheckFailure("unknown final field")
+    if program["final_fields"] != [name for name in names if name in program["final_fields"]]:
+        raise CheckFailure("final fields must follow declaration order")
     if not isinstance(program["initial_domain"], list) or not program["initial_domain"]:
         raise CheckFailure("initial domain missing")
     seen_states: set[tuple[int, ...]] = set()
@@ -498,7 +500,7 @@ def _minimum_repair_from_pairs(
                 return [name for position, name in enumerate(names) if position in selected]
     raise CheckFailure("no repair exists")
 
-def _check_rejection(program: Mapping[str, Any], stage: Mapping[str, Any], rejection: Mapping[str, Any], counter: list[int]) -> None:
+def _check_rejection(program: Mapping[str, Any], stage: Mapping[str, Any], rejection: Mapping[str, Any], counter: list[int]) -> int:
     if not isinstance(rejection, dict) or set(rejection) != {"candidate_fields", "exact", "witness", "repair_fields"}:
         raise CheckFailure("rejection object has unknown or missing fields")
     names = _fields(program)
@@ -506,11 +508,11 @@ def _check_rejection(program: Mapping[str, Any], stage: Mapping[str, Any], rejec
     if not isinstance(candidate, list) or candidate != [name for name in names if name in set(candidate)]:
         raise CheckFailure("candidate projection is malformed or out of order")
     pairs = _candidate_collisions(program, stage["segment"], stage["domain"], candidate, stage["out_fields"])
-    counter[0] += len(stage["domain"])
+    replayed = len(stage["domain"])
     if not pairs:
         if rejection.get("exact") is not True or rejection.get("witness") is not None or rejection.get("repair_fields") != []:
             raise CheckFailure("exact candidate encoded as rejection")
-        return
+        return replayed
     if rejection.get("exact") is not False:
         raise CheckFailure("inexact candidate encoded as exact")
     witness = rejection.get("witness")
@@ -528,6 +530,7 @@ def _check_rejection(program: Mapping[str, Any], stage: Mapping[str, Any], rejec
     expected_repair = _minimum_repair_from_pairs(program, pairs, candidate, counter)
     if rejection.get("repair_fields") != expected_repair:
         raise CheckFailure("repair is not minimum-cardinality canonical")
+    return replayed + 2
 
 
 def _summary_compose(certificate: Mapping[str, Any], initial: Mapping[str, int]) -> dict[str, Any]:
@@ -636,7 +639,7 @@ def check_certificate(certificate: Mapping[str, Any]) -> dict[str, Any]:
                 rejection = stage["rejections"][label]
                 if rejection.get("candidate_fields") != expected_candidate:
                     raise CheckFailure("named rejection candidate mismatch")
-                _check_rejection(program, stage, rejection, subset_counter)
+                execution_obligations += _check_rejection(program, stage, rejection, subset_counter)
 
     if certificate.get("whole_key_fields") != stages[0]["key_fields"]:
         raise CheckFailure("whole key mismatch")

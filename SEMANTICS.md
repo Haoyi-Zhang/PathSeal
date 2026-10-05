@@ -23,6 +23,8 @@ equality and ordering, modular addition, and a conditional.  A path executes a
 fixed sequence of segments and stops at the first non-`ok` result.  Its
 observable result consists of the status, ordered events, and selected final
 fields when execution succeeds.
+The final-field list follows declaration order, including the empty query;
+both program validators require this canonical interface.
 
 ## Exact projection
 
@@ -38,8 +40,10 @@ minimum-cardinality hitting set, breaking ties by field declaration order.
 The summary table contains one result for every projected key.  The decision
 version of minimum exact-key synthesis is NP-complete for explicit Boolean
 state/observation tables: membership follows by checking a candidate projection,
-and a Hitting Set instance is represented by one all-zero state with observation
+and a bounded, at-least-one Hitting Set instance is represented by one all-zero state with observation
 zero plus one characteristic-vector state with observation one per hyperedge.
+Its hardness follows from Set Covering by incidence duality: covering elements
+become hyperedges, available sets become fields, and the budget is unchanged.
 
 ## Backward interfaces and composition
 
@@ -74,3 +78,8 @@ projections.  The checker:
 
 The checker shares the JSON schema and mathematical specification with the
 producer, but imports none of the producer or model implementation.
+
+Subset obligations count candidate projections, including repair search.
+Execution accounting includes stage, whole-path and rejection replay; it is
+semantic accounting rather than an instruction count. Rejection replay does
+not enter the subset counter. The timed campaign disables named rejections.

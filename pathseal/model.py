@@ -101,6 +101,8 @@ def validate_program(program: Mapping[str, Any]) -> None:
             raise ModelError(f"unknown final field {name}")
     if len(set(program["final_fields"])) != len(program["final_fields"]):
         raise ModelError("duplicate final fields")
+    if program["final_fields"] != [name for name in specs if name in program["final_fields"]]:
+        raise ModelError("final fields must follow declaration order")
 
     if not isinstance(program["initial_domain"], list) or not program["initial_domain"]:
         raise ModelError("initial domain must be a nonempty list")
