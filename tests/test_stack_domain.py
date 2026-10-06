@@ -3,6 +3,8 @@ import unittest
 
 from pathseal.model import ModelError, execute_segment, validate_program
 from checker.independent_checker import CheckFailure, _segment, _validate_program
+from checker.independent_checker import check_certificate
+from pathseal.producer import produce_certificate
 
 
 def program(pointer_size=3, depth=0, ops=None):
@@ -76,6 +78,35 @@ class StackDomainTests(unittest.TestCase):
         result = self.check_both(program(depth=2, ops=[{"op": "pop", "expr": 1}]))
         self.assertEqual(result.status, "stack_error")
         self.assertEqual(result.state["sp"], 2)
+
+    def test_pop_normalizes_a_legal_out_of_carrier_constant(self):
+        subject = program(ops=[{"op": "push", "expr": 1}, {"op": "pop", "expr": 3}])
+        result = self.check_both(subject)
+        self.assertEqual(result.status, "ok")
+        self.assertEqual(result.state, {"sp": 0, "s0": 0, "s1": 0})
+        certificate = produce_certificate(subject)
+        self.assertEqual(check_certificate(certificate)["status"], "PASS")
+        self.assertEqual(certificate["whole_entries"][0]["result"]["out"], result.state)
+
+    def test_pop_rejects_a_different_normalized_token(self):
+        subject = program(ops=[{"op": "push", "expr": 1}, {"op": "pop", "expr": 2}])
+        result = self.check_both(subject)
+        self.assertEqual(result.status, "stack_error")
+        self.assertEqual(result.state, {"sp": 1, "s0": 1, "s1": 0})
+        certificate = produce_certificate(subject)
+        self.assertEqual(check_certificate(certificate)["status"], "PASS")
+        self.assertEqual(certificate["whole_entries"][0]["result"]["out"], {})
+
+    def test_each_pop_uses_its_selected_slot_modulus(self):
+        subject = program(ops=[
+            {"op": "push", "expr": -1}, {"op": "push", "expr": 2},
+            {"op": "pop", "expr": 5}, {"op": "pop", "expr": 3},
+        ])
+        subject["fields"][2]["size"] = 3
+        result = self.check_both(subject)
+        self.assertEqual(result.status, "ok")
+        self.assertEqual(result.state, {"sp": 0, "s0": 0, "s1": 0})
+        self.assertEqual(check_certificate(produce_certificate(subject))["status"], "PASS")
 
 
 if __name__ == "__main__":

@@ -15,16 +15,25 @@ A segment is a straight-line sequence of five operations:
   field size;
 - `assume(e)` terminates the segment with `infeasible` when `e` is zero;
 - `emit(tag,args)` appends an observable event;
-- `push(e)` writes a token to the next stack slot or reports `stack_error`;
-- `pop(e)` checks and removes the top token or reports `stack_error`.
+- `push(e)` reduces the expression modulo the next slot's size, writes that
+  token, and increments the pointer; a full stack reports `stack_error`;
+- `pop(e)` on a nonempty stack compares the top token with the expression
+  reduced modulo that top slot's size. A matching pop decrements the pointer
+  and clears the removed slot to zero. Underflow or a mismatch reports
+  `stack_error` without changing the pointer or slot.
 
 Expressions comprise field reads, integer constants, Boolean connectives,
 equality and ordering, modular addition, and a conditional.  A path executes a
-fixed sequence of segments and stops at the first non-`ok` result.  Its
+nonempty fixed sequence of segments and stops at the first non-`ok` result. Its
 observable result consists of the status, ordered events, and selected final
 fields when execution succeeds.
 The final-field list follows declaration order, including the empty query;
 both program validators require this canonical interface.
+Out-of-carrier integer constants are legal expressions: for a size-two slot,
+`push(1); pop(3)` succeeds, whereas `push(1); pop(2)` reports a mismatch.
+Failed results retain status and ordered events but expose no selected state
+fields. `ExecutionResult.observable` represents this missing interface by
+`None`; certificate JSON represents it by an empty `out` object.
 
 ## Exact projection
 
@@ -78,6 +87,10 @@ projections.  The checker:
 
 The checker shares the JSON schema and mathematical specification with the
 producer, but imports none of the producer or model implementation.
+Certificate comparisons preserve JSON scalar types: integer state values,
+event arguments, indices, and counts cannot be replaced by Boolean or
+floating-point values that compare numerically equal in Python. Boolean
+rejection verdicts remain Boolean values.
 
 Subset obligations count candidate projections, including repair search.
 Execution accounting includes stage, whole-path and rejection replay; it is

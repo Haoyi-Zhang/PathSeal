@@ -19,10 +19,11 @@ class ExecutionResult:
     events: tuple[tuple[str, tuple[int, ...]], ...]
 
     def observable(self, fields: Sequence[str]) -> tuple[Any, ...]:
+        """Observe outputs only on success; None represents the failure bottom."""
         return (
             self.status,
             self.events,
-            tuple((name, self.state[name]) for name in fields),
+            tuple((name, self.state[name]) for name in fields) if self.status == "ok" else None,
         )
 
     def as_json(self, fields: Sequence[str]) -> dict[str, Any]:

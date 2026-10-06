@@ -17,6 +17,21 @@ class CheckFailure(ValueError):
     pass
 
 
+def _same_json(actual: Any, expected: Any) -> bool:
+    """Compare JSON trees without coercing Boolean, integer, or float scalars."""
+    if type(actual) is not type(expected):
+        return False
+    if isinstance(expected, dict):
+        return actual.keys() == expected.keys() and all(
+            _same_json(actual[key], value) for key, value in expected.items()
+        )
+    if isinstance(expected, list):
+        return len(actual) == len(expected) and all(
+            _same_json(left, right) for left, right in zip(actual, expected, strict=True)
+        )
+    return actual == expected
+
+
 def _freeze(value: Any) -> Any:
     if isinstance(value, dict):
         return tuple((key, _freeze(value[key])) for key in sorted(value))
@@ -519,13 +534,13 @@ def _check_rejection(program: Mapping[str, Any], stage: Mapping[str, Any], rejec
     if not isinstance(witness, dict) or set(witness) != {"left", "right", "left_result", "right_result", "criterion"}:
         raise CheckFailure("collision witness has unknown or missing fields")
     expected_left, expected_right = _canonical_witness(program, pairs)
-    if witness.get("left") != expected_left or witness.get("right") != expected_right:
+    if not _same_json(witness.get("left"), expected_left) or not _same_json(witness.get("right"), expected_right):
         raise CheckFailure("collision witness is not canonical")
     if witness.get("criterion") != "minimum-hamming-then-lexicographic":
         raise CheckFailure("unknown witness order")
     left_result = _render_result(_segment(program, stage["segment"], expected_left), stage["out_fields"])
     right_result = _render_result(_segment(program, stage["segment"], expected_right), stage["out_fields"])
-    if witness.get("left_result") != left_result or witness.get("right_result") != right_result:
+    if not _same_json(witness.get("left_result"), left_result) or not _same_json(witness.get("right_result"), right_result):
         raise CheckFailure("witness result mismatch")
     expected_repair = _minimum_repair_from_pairs(program, pairs, candidate, counter)
     if rejection.get("repair_fields") != expected_repair:
@@ -571,7 +586,7 @@ def check_certificate(certificate: Mapping[str, Any]) -> dict[str, Any]:
     program = certificate.get("program")
     _validate_program(program)
     names = _fields(program)
-    if certificate.get("field_order") != names:
+    if not _same_json(certificate.get("field_order"), names):
         raise CheckFailure("field order mismatch")
 
     stages = certificate.get("stages")
@@ -588,9 +603,9 @@ def check_certificate(certificate: Mapping[str, Any]) -> dict[str, Any]:
         permitted_stage_keys = (base_keys, base_keys | {"rejections"})
         if set(stage) not in permitted_stage_keys:
             raise CheckFailure("stage has unknown or missing fields")
-        if stage["index"] != index or stage["segment"] != program["path"][index]:
+        if not _same_json(stage["index"], index) or stage["segment"] != program["path"][index]:
             raise CheckFailure("stage ordering mismatch")
-        if stage["domain"] != domains[index]:
+        if not _same_json(stage["domain"], domains[index]):
             raise CheckFailure("stage domain is not the reachable concrete domain")
         key_fields = stage["key_fields"]
         out_fields = stage["out_fields"]
@@ -612,14 +627,14 @@ def check_certificate(certificate: Mapping[str, Any]) -> dict[str, Any]:
         expected_entries = _entries_from_results(
             stage["domain"], stage_results, key_fields, out_fields
         )
-        if stage["entries"] != expected_entries:
+        if not _same_json(stage["entries"], expected_entries):
             raise CheckFailure("summary table mismatch")
         minimality = stage["minimality"]
         if not isinstance(minimality, dict) or set(minimality) != {"criterion", "collision_masks"}:
             raise CheckFailure("minimality record has unknown or missing fields")
         if minimality.get("criterion") != "minimum-cardinality-then-declaration-order":
             raise CheckFailure("minimality criterion mismatch")
-        if minimality.get("collision_masks") != expected_mask_count:
+        if not _same_json(minimality.get("collision_masks"), expected_mask_count):
             raise CheckFailure("collision-mask count mismatch")
         expected_support = _conservative_support(program, stage["segment"], out_fields)
         if stage["support_fields"] != expected_support:
@@ -641,7 +656,7 @@ def check_certificate(certificate: Mapping[str, Any]) -> dict[str, Any]:
                     raise CheckFailure("named rejection candidate mismatch")
                 execution_obligations += _check_rejection(program, stage, rejection, subset_counter)
 
-    if certificate.get("whole_key_fields") != stages[0]["key_fields"]:
+    if not _same_json(certificate.get("whole_key_fields"), stages[0]["key_fields"]):
         raise CheckFailure("whole key mismatch")
     expected_whole: dict[tuple[int, ...], dict[str, Any]] = {}
     for state in program["initial_domain"]:
@@ -649,22 +664,22 @@ def check_certificate(certificate: Mapping[str, Any]) -> dict[str, Any]:
         direct = _render_result(_path(program, state), program["final_fields"])
         composed = _summary_compose(certificate, state)
         execution_obligations += len(program["path"]) + 1
-        if direct != composed:
+        if not _same_json(direct, composed):
             raise CheckFailure("summary composition differs from concrete path semantics")
         item = {"key": {name: value for name, value in zip(stages[0]["key_fields"], key, strict=True)}, "result": direct}
         if key in expected_whole and _freeze(expected_whole[key]["result"]) != _freeze(direct):
             raise CheckFailure("whole key is not exact")
         expected_whole[key] = item
     whole_entries = [expected_whole[key] for key in sorted(expected_whole)]
-    if certificate.get("whole_entries") != whole_entries:
+    if not _same_json(certificate.get("whole_entries"), whole_entries):
         raise CheckFailure("whole summary table mismatch")
 
     production = certificate.get("production")
     if not isinstance(production, dict) or set(production) != {"programs", "stages", "domain_states"}:
         raise CheckFailure("production receipt has unknown or missing fields")
-    if production.get("programs") != 1 or production.get("stages") != len(stages):
+    if not _same_json(production.get("programs"), 1) or not _same_json(production.get("stages"), len(stages)):
         raise CheckFailure("production counts mismatch")
-    if production.get("domain_states") != sum(len(domain) for domain in domains[:-1]):
+    if not _same_json(production.get("domain_states"), sum(len(domain) for domain in domains[:-1])):
         raise CheckFailure("production domain count mismatch")
 
     return {
