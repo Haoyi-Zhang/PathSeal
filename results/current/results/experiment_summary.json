@@ -1,0 +1,262 @@
+{
+  "aggregate": {
+    "checker_ms_total": 9464.183,
+    "checker_obligations_per_second": 82970.817,
+    "pathseal_entry_reduction_vs_exact_state_percent": 75.463,
+    "pathseal_entry_reduction_vs_support_percent": 0.882,
+    "pathseal_key_width_reduction_vs_exact_state_percent": 77.14,
+    "pathseal_key_width_reduction_vs_support_percent": 47.777,
+    "producer_ms_total": 8525.277
+  },
+  "baseline_summary": {
+    "call-context": {
+      "collision_pairs": 504848,
+      "distinct_keys": 5600,
+      "error_states": 42620,
+      "exact_stages": 12,
+      "inexact_stages": 928,
+      "mean_key_width": 4.0,
+      "mean_reuse_factor": 13.781,
+      "stages": 940
+    },
+    "exact-state": {
+      "collision_pairs": 0,
+      "distinct_keys": 66376,
+      "error_states": 0,
+      "exact_stages": 940,
+      "inexact_stages": 0,
+      "mean_key_width": 14.319,
+      "mean_reuse_factor": 1.0,
+      "stages": 940
+    },
+    "pathseal": {
+      "collision_pairs": 0,
+      "distinct_keys": 16287,
+      "error_states": 0,
+      "exact_stages": 940,
+      "inexact_stages": 0,
+      "mean_key_width": 3.273,
+      "mean_reuse_factor": 4.098,
+      "stages": 940
+    },
+    "security-surface": {
+      "collision_pairs": 137840,
+      "distinct_keys": 10446,
+      "error_states": 23192,
+      "exact_stages": 43,
+      "inexact_stages": 897,
+      "mean_key_width": 4.0,
+      "mean_reuse_factor": 6.135,
+      "stages": 940
+    },
+    "support": {
+      "collision_pairs": 0,
+      "distinct_keys": 16432,
+      "error_states": 0,
+      "exact_stages": 940,
+      "inexact_stages": 0,
+      "mean_key_width": 6.268,
+      "mean_reuse_factor": 4.062,
+      "stages": 940
+    },
+    "syntax-only": {
+      "collision_pairs": 2775200,
+      "distinct_keys": 940,
+      "error_states": 61872,
+      "exact_stages": 0,
+      "inexact_stages": 940,
+      "mean_key_width": 0.0,
+      "mean_reuse_factor": 70.613,
+      "stages": 940
+    }
+  },
+  "campaign": {
+    "checked_semantic_obligations": 785251,
+    "execution_obligations": 163336,
+    "initial_states": 9920,
+    "pathseal_exact_stages": 940,
+    "pathseal_stage_count": 940,
+    "programs": 120,
+    "reachable_stage_states": 66376,
+    "stages": 940,
+    "subset_obligations": 621915,
+    "tiers": {
+      "large": 20,
+      "medium": 40,
+      "small": 60
+    }
+  },
+  "dead_key_occurrences": 0,
+  "key_field_frequency": {
+    "alias": 549,
+    "aux0": 236,
+    "aux1": 92,
+    "ctx": 467,
+    "flag": 40,
+    "guard": 86,
+    "input": 500,
+    "mode": 514,
+    "san": 203,
+    "stk0": 70,
+    "stk1": 13,
+    "taint": 96,
+    "tmp": 211
+  },
+  "key_role_frequency": {
+    "alias": 549,
+    "auxiliary": 328,
+    "context": 467,
+    "path": 640,
+    "sanitizer": 203,
+    "source": 500,
+    "stack": 83,
+    "taint": 96,
+    "value": 211
+  },
+  "key_width_distribution": {
+    "1": 9,
+    "2": 111,
+    "3": 495,
+    "4": 264,
+    "5": 61
+  },
+  "segment_summary": {
+    "alias-gate": {
+      "domain_size_mean": 84.4,
+      "key_width_mean": 3.5,
+      "reuse_mean": 4.011,
+      "stages": 20
+    },
+    "branch": {
+      "domain_size_mean": 52.5,
+      "key_width_mean": 2.967,
+      "reuse_mean": 4.095,
+      "stages": 120
+    },
+    "context-fold": {
+      "domain_size_mean": 75.4,
+      "key_width_mean": 3.3,
+      "reuse_mean": 4.0,
+      "stages": 20
+    },
+    "helper": {
+      "domain_size_mean": 117.333,
+      "key_width_mean": 4.233,
+      "reuse_mean": 4.005,
+      "stages": 60
+    },
+    "nested-call": {
+      "domain_size_mean": 117.333,
+      "key_width_mean": 4.083,
+      "reuse_mean": 4.019,
+      "stages": 60
+    },
+    "nested-return": {
+      "domain_size_mean": 117.333,
+      "key_width_mean": 3.733,
+      "reuse_mean": 4.4,
+      "stages": 60
+    },
+    "propagate": {
+      "domain_size_mean": 82.667,
+      "key_width_mean": 3.667,
+      "reuse_mean": 4.006,
+      "stages": 120
+    },
+    "return": {
+      "domain_size_mean": 46.033,
+      "key_width_mean": 2.7,
+      "reuse_mean": 4.322,
+      "stages": 120
+    },
+    "sanitize": {
+      "domain_size_mean": 52.5,
+      "key_width_mean": 3.042,
+      "reuse_mean": 4.046,
+      "stages": 120
+    },
+    "sink": {
+      "domain_size_mean": 34.133,
+      "key_width_mean": 2.408,
+      "reuse_mean": 4.086,
+      "stages": 120
+    },
+    "source": {
+      "domain_size_mean": 82.667,
+      "key_width_mean": 3.7,
+      "reuse_mean": 4.003,
+      "stages": 120
+    }
+  },
+  "status": "PASS",
+  "terminal_status": {
+    "infeasible": 956,
+    "ok": 4096,
+    "stack_error": 4868
+  },
+  "tier_summary": {
+    "large": {
+      "certificate_bytes_median": 267761,
+      "checker_ms_median": 234.321,
+      "checker_ms_p95": 262.277,
+      "exact_state_key_width_mean": 17.0,
+      "fields": [
+        17
+      ],
+      "initial_states": [
+        160
+      ],
+      "pathseal_key_width_mean": 3.695,
+      "pathseal_reuse_mean": 4.106,
+      "producer_ms_median": 207.699,
+      "producer_ms_p95": 243.832,
+      "programs": 20,
+      "segments": [
+        11
+      ],
+      "support_key_width_mean": 6.555
+    },
+    "medium": {
+      "certificate_bytes_median": 124815,
+      "checker_ms_median": 78.867,
+      "checker_ms_p95": 87.381,
+      "exact_state_key_width_mean": 14.0,
+      "fields": [
+        14
+      ],
+      "initial_states": [
+        96
+      ],
+      "pathseal_key_width_mean": 3.294,
+      "pathseal_reuse_mean": 4.15,
+      "producer_ms_median": 71.401,
+      "producer_ms_p95": 86.415,
+      "programs": 40,
+      "segments": [
+        9
+      ],
+      "support_key_width_mean": 6.475
+    },
+    "small": {
+      "certificate_bytes_median": 54223,
+      "checker_ms_median": 25.065,
+      "checker_ms_p95": 26.711,
+      "exact_state_key_width_mean": 13.0,
+      "fields": [
+        13
+      ],
+      "initial_states": [
+        48
+      ],
+      "pathseal_key_width_mean": 2.994,
+      "pathseal_reuse_mean": 4.043,
+      "producer_ms_median": 22.406,
+      "producer_ms_p95": 26.184,
+      "programs": 60,
+      "segments": [
+        6
+      ],
+      "support_key_width_mean": 5.886
+    }
+  }
+}

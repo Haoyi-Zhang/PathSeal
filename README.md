@@ -53,6 +53,14 @@ The retained runtime measurements use CPython 3.12.14 on Windows 11 on an
 Intel Family 6, Model 151 processor, with one worker. Both the generated paper
 tables and numerical plots use these same observations.
 
+The current Linux Python 3.12 run passed 40 unit tests and reproduced 120
+programs, 940 exact stages, and 785,251 semantic obligations; all 280 variants
+were rejected. Non-timing CSV fields match the retained campaign. New raw
+outputs are in `results/current/`, with larger JSON/CSV files compressed
+losslessly as `.gz`. The updated producer and checker aggregate times were
+8.53 and 9.46 seconds on that host; they do not replace the historical
+Windows timing distributions above.
+
 The certificates establish facts only for the embedded finite program and
 explicit input domain.  They are not proofs about full C or C++, exploitability,
 production vulnerability detection, unrestricted pointers, concurrency,
