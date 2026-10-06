@@ -1,12 +1,12 @@
 {
   "aggregate": {
-    "checker_ms_total": 7260.112,
-    "checker_obligations_per_second": 108159.626,
+    "checker_ms_total": 6240.875,
+    "checker_obligations_per_second": 125823.863,
     "pathseal_entry_reduction_vs_exact_state_percent": 75.463,
     "pathseal_entry_reduction_vs_support_percent": 0.882,
     "pathseal_key_width_reduction_vs_exact_state_percent": 77.14,
     "pathseal_key_width_reduction_vs_support_percent": 47.777,
-    "producer_ms_total": 6963.265
+    "producer_ms_total": 5780.034
   },
   "baseline_summary": {
     "call-context": {
@@ -197,8 +197,8 @@
   "tier_summary": {
     "large": {
       "certificate_bytes_median": 267761,
-      "checker_ms_median": 192.819,
-      "checker_ms_p95": 223.317,
+      "checker_ms_median": 161.471,
+      "checker_ms_p95": 188.531,
       "exact_state_key_width_mean": 17.0,
       "fields": [
         17
@@ -208,8 +208,8 @@
       ],
       "pathseal_key_width_mean": 3.695,
       "pathseal_reuse_mean": 4.106,
-      "producer_ms_median": 182.106,
-      "producer_ms_p95": 235.743,
+      "producer_ms_median": 147.584,
+      "producer_ms_p95": 169.454,
       "programs": 20,
       "segments": [
         11
@@ -218,8 +218,8 @@
     },
     "medium": {
       "certificate_bytes_median": 124815,
-      "checker_ms_median": 57.392,
-      "checker_ms_p95": 65.029,
+      "checker_ms_median": 50.981,
+      "checker_ms_p95": 55.581,
       "exact_state_key_width_mean": 14.0,
       "fields": [
         14
@@ -229,8 +229,8 @@
       ],
       "pathseal_key_width_mean": 3.294,
       "pathseal_reuse_mean": 4.15,
-      "producer_ms_median": 52.612,
-      "producer_ms_p95": 59.423,
+      "producer_ms_median": 47.681,
+      "producer_ms_p95": 53.361,
       "programs": 40,
       "segments": [
         9
@@ -239,8 +239,8 @@
     },
     "small": {
       "certificate_bytes_median": 54223,
-      "checker_ms_median": 16.742,
-      "checker_ms_p95": 18.372,
+      "checker_ms_median": 15.111,
+      "checker_ms_p95": 16.031,
       "exact_state_key_width_mean": 13.0,
       "fields": [
         13
@@ -250,8 +250,8 @@
       ],
       "pathseal_key_width_mean": 2.994,
       "pathseal_reuse_mean": 4.043,
-      "producer_ms_median": 15.866,
-      "producer_ms_p95": 18.015,
+      "producer_ms_median": 14.555,
+      "producer_ms_p95": 15.719,
       "programs": 60,
       "segments": [
         6

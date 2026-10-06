@@ -23,6 +23,11 @@ campaign, independent replay of one retained certificate from each scale, and a 
 It regenerates all files under `results/` and the sample programs and
 certificates under `examples/`.
 
+The runner supports Windows and POSIX systems. Each command is limited to
+180 seconds, and timeout cleanup stops only that command's owned process tree.
+The current tests include four runner regressions in addition to the twenty
+semantics and certificate tests.
+
 ## Main components
 
 - `pathseal/model.py` defines the producer-side finite semantics.
@@ -43,6 +48,10 @@ certificates under `examples/`.
 files retain one row per program, stage, or baseline.  Runtime values are
 observations and may vary across machines; program counts, domains, keys,
 proof obligations, exactness outcomes, and mutation outcomes are deterministic.
+
+The retained runtime measurements use CPython 3.12.14 on Windows 11 on an
+Intel Family 6, Model 151 processor, with one worker. Both the generated paper
+tables and numerical plots use these same observations.
 
 The certificates establish facts only for the embedded finite program and
 explicit input domain.  They are not proofs about full C or C++, exploitability,

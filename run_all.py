@@ -12,7 +12,34 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 
-def run(label: str, arguments: list[str]) -> None:
+def stop_owned_process(process: subprocess.Popen) -> None:
+    """Stop only the child created for the current bounded experiment."""
+    if process.poll() is not None:
+        return
+    if os.name == 'nt':
+        taskkill = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32' / 'taskkill.exe'
+        subprocess.run([str(taskkill), '/PID', str(process.pid), '/T', '/F'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                       timeout=10, check=False)
+        if process.poll() is None:
+            process.kill()
+        process.wait(timeout=10)
+        return
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        process.wait(timeout=5)
+
+
+def run(label: str, arguments: list[str], *, timeout: float = 180) -> None:
     print(f"== {label} ==", flush=True)
     environment = dict(os.environ)
     environment["PYTHONPATH"] = str(ROOT)
@@ -24,15 +51,10 @@ def run(label: str, arguments: list[str]) -> None:
         start_new_session=True,
     )
     try:
-        returncode = process.wait(timeout=180)
+        returncode = process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
-        os.killpg(process.pid, signal.SIGTERM)
-        try:
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            os.killpg(process.pid, signal.SIGKILL)
-            process.wait()
-        raise SystemExit(f"{label} exceeded the 180-second bound")
+        stop_owned_process(process)
+        raise SystemExit(f"{label} exceeded the {timeout:g}-second bound")
     completed = subprocess.CompletedProcess(process.args, returncode)
     if completed.returncode != 0:
         raise SystemExit(f"{label} failed with exit status {completed.returncode}")
