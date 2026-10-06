@@ -69,8 +69,13 @@ def main() -> int:
         claims = list(csv.DictReader(handle))
     if not claims or any(not all(row.values()) for row in claims):
         raise ValueError("claim-evidence ledger has an empty cell")
-    if any(row["fresh_self_recheck_status"] != "PASS" for row in claims):
-        raise ValueError("claim-evidence ledger contains an unchecked claim")
+    for row in claims:
+        status = row["fresh_self_recheck_status"]
+        if row["maturity_state"] == "proved":
+            if status != "PROOF_REVIEWED":
+                raise ValueError("theoretical claim must identify proof review rather than executable evidence")
+        elif status != "PASS":
+            raise ValueError("executable claim-evidence ledger contains an unchecked claim")
 
     required_external = {
         "resource", "stable_location", "license_or_terms", "access_date",

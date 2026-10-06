@@ -5,9 +5,9 @@
 A program declares a finite ordered product of integer fields.  Each field has a
 finite modulus and a role used only by experimental baselines.  A state assigns
 a legal value to every field.  A bounded call stack is represented explicitly
-by a pointer and declared slots (two in the retained campaign). For a capacity
+by a pointer distinct from every declared slot (two slots in the retained campaign). For a capacity
 of `C` slots, the pointer field has exactly `C+1` values, `0` through `C`.
-Both validators reject smaller or larger pointer carriers before execution.
+Both validators reject pointer-slot aliasing and smaller or larger pointer carriers before execution.
 
 A segment is a straight-line sequence of five operations:
 

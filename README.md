@@ -54,7 +54,7 @@ Intel Family 6, Model 151 processor, with one worker. Both the generated paper
 tables and numerical plots use these same observations.
 
 The current Linux Python 3.12 run passed 40 unit tests and reproduced 120
-programs, 940 exact stages, and 785,251 semantic obligations; all 280 variants
+programs, 940 exact stages, and 785,251 semantic obligations; all 280 mutation trials
 were rejected. Non-timing CSV fields match the retained campaign. New raw
 outputs are in `results/current/`, with larger JSON/CSV files compressed
 losslessly as `.gz`. The updated producer and checker aggregate times were

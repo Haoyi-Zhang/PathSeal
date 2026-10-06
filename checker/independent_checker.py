@@ -130,6 +130,8 @@ def _validate_program(program: Mapping[str, Any]) -> None:
         raise CheckFailure("duplicate stack slot")
     if any(slot not in specs for slot in stack["slots"]):
         raise CheckFailure("undeclared stack slot")
+    if stack["pointer"] in stack["slots"]:
+        raise CheckFailure("stack pointer must be distinct from every slot")
     if specs[stack["pointer"]]["size"] != len(stack["slots"]) + 1:
         raise CheckFailure("stack pointer domain must equal capacity plus one")
 
