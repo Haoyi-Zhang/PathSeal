@@ -25,8 +25,18 @@ certificates under `examples/`.
 
 The runner supports Windows and POSIX systems. Each command is limited to
 180 seconds, and timeout cleanup stops only that command's owned process tree.
-The current tests include four runner regressions in addition to the twenty
-semantics and certificate tests.
+Test discovery includes four runner regressions and the semantics, certificate,
+stack-carrier, and masks-only synthesis regressions in `tests/`.
+
+For the portable, pure-computation masks-only regression alone, run
+`python3 -m unittest discover -s tests -p test_masks_only.py -v`.
+It uses a test-local pair scan and a direct finite partition oracle, plus the
+independent checker; it does not load a prior artifact or saved result.
+Minimum-key synthesis retains distinct masks without collecting unused pair
+records. Rejection certificates still collect pairs for canonical witnesses and
+minimum repairs. Pair comparisons, certificate order, and obligation counts
+are unchanged. The retained campaign and timing records below were not rerun
+for this storage change; no measured speedup or memory reduction is claimed.
 
 ## Main components
 
@@ -53,11 +63,11 @@ The retained runtime measurements use CPython 3.12.14 on Windows 11 on an
 Intel Family 6, Model 151 processor, with one worker. Both the generated paper
 tables and numerical plots use these same observations.
 
-The current Linux Python 3.12 run passed 40 unit tests and reproduced 120
+The retained Linux Python 3.12 run passed 40 unit tests and reproduced 120
 programs, 940 exact stages, and 785,251 semantic obligations; all 280 mutation trials
 were rejected. Non-timing CSV fields match the retained campaign. New raw
 outputs are in `results/current/`, with larger JSON/CSV files compressed
-losslessly as `.gz`. The updated producer and checker aggregate times were
+losslessly as `.gz`. That run's producer and checker aggregate times were
 8.53 and 9.46 seconds on that host; they do not replace the historical
 Windows timing distributions above.
 

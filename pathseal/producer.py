@@ -46,6 +46,8 @@ def _pair_masks(
     signatures: Sequence[Any],
     fields: Sequence[str],
     restrict_equal_on: Sequence[str] | None = None,
+    *,
+    collect_pairs: bool = True,
 ) -> tuple[set[int], list[tuple[int, int, int]]]:
     masks: set[int] = set()
     pairs: list[tuple[int, int, int]] = []
@@ -64,7 +66,8 @@ def _pair_masks(
             if mask == 0:
                 raise CertificateError("determinism violated: identical states have different results")
             masks.add(mask)
-            pairs.append((i, j, mask))
+            if collect_pairs:
+                pairs.append((i, j, mask))
     return masks, pairs
 
 
@@ -95,7 +98,7 @@ def minimum_exact_key(
     order = field_order(program)
     results = [execute_segment(program, segment_id, state) for state in domain]
     signatures = [_result_signature(result, out_fields) for result in results]
-    masks, _ = _pair_masks(domain, signatures, order)
+    masks, _ = _pair_masks(domain, signatures, order, collect_pairs=False)
     key = _minimum_hitting_set(masks, order)
     return key, results, masks
 
