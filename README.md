@@ -27,6 +27,12 @@ The runner supports Windows and POSIX systems. Each command is limited to
 180 seconds, and timeout cleanup stops only that command's owned process tree.
 Test discovery includes four runner regressions and the semantics, certificate,
 stack-carrier, and masks-only synthesis regressions in `tests/`.
+The program schema is closed: programs require exactly the seven named top-level
+fields, segments require exactly `id` and `ops`, and program/event names are
+nonempty strings. Producer and checker validate that contract separately.
+Five schema-parity regressions cover valid handoff and unsupported metadata or
+names. A Windows/Python 3.12.14 run passed all 51 current unit methods; this
+separate unit run does not replace the retained campaign measurements below.
 
 For the portable, pure-computation masks-only regression alone, run
 `python3 -m unittest discover -s tests -p test_masks_only.py -v`.

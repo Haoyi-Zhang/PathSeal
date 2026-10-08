@@ -44,9 +44,10 @@ def field_order(program: Mapping[str, Any]) -> list[str]:
 
 def validate_program(program: Mapping[str, Any]) -> None:
     required = {"name", "fields", "stack", "segments", "path", "initial_domain", "final_fields"}
-    missing = required - set(program)
-    if missing:
-        raise ModelError(f"program missing fields: {sorted(missing)}")
+    if not isinstance(program, Mapping) or set(program) != required:
+        raise ModelError("program requires exactly name, fields, stack, segments, path, initial_domain, and final_fields")
+    if not isinstance(program["name"], str) or not program["name"]:
+        raise ModelError("program name must be a nonempty string")
 
     specs: dict[str, dict[str, Any]] = {}
     for item in program["fields"]:
@@ -83,6 +84,8 @@ def validate_program(program: Mapping[str, Any]) -> None:
 
     segment_ids: set[str] = set()
     for seg in program["segments"]:
+        if not isinstance(seg, Mapping) or set(seg) != {"id", "ops"}:
+            raise ModelError("segments require exactly id and ops")
         sid = seg.get("id")
         if not isinstance(sid, str) or not sid or sid in segment_ids:
             raise ModelError("segments require unique nonempty ids")

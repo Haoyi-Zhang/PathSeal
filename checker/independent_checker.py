@@ -158,7 +158,9 @@ def _validate_program(program: Mapping[str, Any]) -> None:
                     raise CheckFailure("bad assume operation")
                 _validate_expr(op["expr"], set(names))
             elif kind == "emit":
-                if set(op) != {"op", "event", "args"} or not isinstance(op["event"], str) or not isinstance(op["args"], list):
+                if (set(op) != {"op", "event", "args"}
+                        or not isinstance(op["event"], str) or not op["event"]
+                        or not isinstance(op["args"], list)):
                     raise CheckFailure("bad emit operation")
                 for expr in op["args"]:
                     _validate_expr(expr, set(names))
